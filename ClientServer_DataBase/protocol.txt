@@ -1,0 +1,361 @@
+
+
+
+
+
+1)Сборка программы
+
+$ make
+g++ -Wall -Wextra -Werror -pedantic -std=gnu++0x -c client.cpp
+g++ -Wall -Wextra -Werror -pedantic -std=gnu++0x -c conn.cpp
+g++ -Wall -Wextra -Werror -pedantic -std=gnu++0x -c database.cpp
+g++ -Wall -Wextra -Werror -pedantic -std=gnu++0x -c library.cpp
+g++ -Wall -Wextra -Werror -pedantic -std=gnu++0x -c query.cpp
+g++ client.o conn.o database.o library.o query.o -o client
+g++ -Wall -Wextra -Werror -pedantic -std=gnu++0x -c server.cpp
+g++ server.o conn.o database.o library.o query.o -o server
+
+2)Запуск программы без аргументов
+
+$ ./server
+Usage: ./server <filename>
+Done.
+
+3)Запуск с некорректными аргументами
+
+$ ./server nothing
+Cannot open file
+Done.
+
+$ ./server a.db 123
+Usage: ./server <filename>
+Done.
+
+4) Корректный запуск программы и проверка работы базы данных
+4.1) Запуск сервера и подключение клиента
+
+SERVER:
+$ ./server a.db
+
+CLIENT:
+$ ./client
+> 
+
+SERVER:
+   4 -New (127.0.0.1 37067).
+
+4.2) Проверка select
+
+> select
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+History                                                         |1979|278|Kuznetsov Y.A                   |Btmgkxefhfegazki ygri wkkfsamfdkzeqyajcxexcuvcbk iaxxwwgaogcizmw
+                                                                |    |   |                                |csjsalpuxgohyprxmguibpprsktqjvlabutrvxlgszcqcibpokx             
+Nature                                                          |1918|32 |Johnson R.                      |Bdljnmzovgfecflkdc vlajzlwdploklgwuuhixbobwrwgqoipjieshec tocdzi
+                                                                |    |   |                                |zibvqoldpgjlbzz cxhhedags                                       
+Computer                                                        |1953|325|Fomenko A.T.                    |D ftukgu                                                        
+Journal of Algebra                                              |1967|287|Johnson R.                      |U zvswco vovnxewibyhwgqfm hmpixkylfpgxsvrfptcip jbhuhmzulwvpts q
+                                                                |    |   |                                |cuuyqlsggwpyedxcetmmf vfvpkdwzinsckhcrcycrvwjhno                
+Genetica                                                        |1902|131|Bertrand A.W.                   |W injlzhulollvcrmatdkobrrprptknrzwexwctecgpnqhuchmvgqwygadvtcykb
+                                                                |    |   |                                |idytvryxmm cttepuowjjiezlpsnmrdjurboxz iazkirdylrijqfooqcvsdlw  
+Genetica                                                        |1890|430|Fomenko A.T.                    |Bbhfrvfzmilmptvuyyxc svssfdmggidxpynkcllaxxeegyseujtatltydutzblk
+                                                                |    |   |                                |gzxfayfqjrucxgjqqtzqljyzbrgqis dqxi                             
+Computer                                                        |1998|484|Fomenko A.T.                    |Rejpatfqldvlbtjszqhwxhzbtwgbyriqlgflz qzsk isi rnhbzda wlwmjmjzm
+                                                                |    |   |                                |ptxdsmrzmq                                                      
+Journal of Algebra                                              |1964|128|Moore J.                        |Uslpvldflzguaetmiazlt cglhnpviylpi jicdurjcrcksklqldqcjqjl      
+History                                                         |1959|359|Miller F.                       |Ppdvnvywlwyryijitotltvjjtvcxsjapotzaoxwostvfqtcigvt esyxmpjtzjxm
+                                                                |    |   |                                |cwbfsmizectvvvsr                                                
+Computer                                                        |1904|172|Smith W.                        |Yftbolpmiqddgyksgyxyrgilyzqndyefsxwviahfqkixihdde qvvygilwvoi ia
+                                                                |    |   |                                |levtebyjbvvzbzrgngqyewfegpipdqepjzhcqvmgewegjvbxarjucoz         
+
+Total: 10 
+
+4.3)Проверка select с фильтрами
+
+> select author=[Fomenko A.T.]
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Computer                                                        |1953|325|Fomenko A.T.                    |D ftukgu                                                        
+Genetica                                                        |1890|430|Fomenko A.T.                    |Bbhfrvfzmilmptvuyyxc svssfdmggidxpynkcllaxxeegyseujtatltydutzblk
+                                                                |    |   |                                |gzxfayfqjrucxgjqqtzqljyzbrgqis dqxi                             
+Computer                                                        |1998|484|Fomenko A.T.                    |Rejpatfqldvlbtjszqhwxhzbtwgbyriqlgflz qzsk isi rnhbzda wlwmjmjzm
+                                                                |    |   |                                |ptxdsmrzmq                                                      
+
+Total: 3 
+
+> select year=[1900,2000]
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+History                                                         |1979|278|Kuznetsov Y.A                   |Btmgkxefhfegazki ygri wkkfsamfdkzeqyajcxexcuvcbk iaxxwwgaogcizmw
+                                                                |    |   |                                |csjsalpuxgohyprxmguibpprsktqjvlabutrvxlgszcqcibpokx             
+Nature                                                          |1918|32 |Johnson R.                      |Bdljnmzovgfecflkdc vlajzlwdploklgwuuhixbobwrwgqoipjieshec tocdzi
+                                                                |    |   |                                |zibvqoldpgjlbzz cxhhedags                                       
+Computer                                                        |1953|325|Fomenko A.T.                    |D ftukgu                                                        
+Journal of Algebra                                              |1967|287|Johnson R.                      |U zvswco vovnxewibyhwgqfm hmpixkylfpgxsvrfptcip jbhuhmzulwvpts q
+                                                                |    |   |                                |cuuyqlsggwpyedxcetmmf vfvpkdwzinsckhcrcycrvwjhno                
+Genetica                                                        |1902|131|Bertrand A.W.                   |W injlzhulollvcrmatdkobrrprptknrzwexwctecgpnqhuchmvgqwygadvtcykb
+                                                                |    |   |                                |idytvryxmm cttepuowjjiezlpsnmrdjurboxz iazkirdylrijqfooqcvsdlw  
+Computer                                                        |1998|484|Fomenko A.T.                    |Rejpatfqldvlbtjszqhwxhzbtwgbyriqlgflz qzsk isi rnhbzda wlwmjmjzm
+                                                                |    |   |                                |ptxdsmrzmq                                                      
+Journal of Algebra                                              |1964|128|Moore J.                        |Uslpvldflzguaetmiazlt cglhnpviylpi jicdurjcrcksklqldqcjqjl      
+History                                                         |1959|359|Miller F.                       |Ppdvnvywlwyryijitotltvjjtvcxsjapotzaoxwostvfqtcigvt esyxmpjtzjxm
+                                                                |    |   |                                |cwbfsmizectvvvsr                                                
+Computer                                                        |1904|172|Smith W.                        |Yftbolpmiqddgyksgyxyrgilyzqndyefsxwviahfqkixihdde qvvygilwvoi ia
+                                                                |    |   |                                |levtebyjbvvzbzrgngqyewfegpipdqepjzhcqvmgewegjvbxarjucoz         
+
+Total: 9 
+
+> select number=[20,40]
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Nature                                                          |1918|32 |Johnson R.                      |Bdljnmzovgfecflkdc vlajzlwdploklgwuuhixbobwrwgqoipjieshec tocdzi
+                                                                |    |   |                                |zibvqoldpgjlbzz cxhhedags                                       
+
+Total: 1 
+
+ select number=[20,40] number=[100,200]
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Nature                                                          |1918|32 |Johnson R.                      |Bdljnmzovgfecflkdc vlajzlwdploklgwuuhixbobwrwgqoipjieshec tocdzi
+                                                                |    |   |                                |zibvqoldpgjlbzz cxhhedags                                       
+Genetica                                                        |1902|131|Bertrand A.W.                   |W injlzhulollvcrmatdkobrrprptknrzwexwctecgpnqhuchmvgqwygadvtcykb
+                                                                |    |   |                                |idytvryxmm cttepuowjjiezlpsnmrdjurboxz iazkirdylrijqfooqcvsdlw  
+Journal of Algebra                                              |1964|128|Moore J.                        |Uslpvldflzguaetmiazlt cglhnpviylpi jicdurjcrcksklqldqcjqjl      
+Computer                                                        |1904|172|Smith W.                        |Yftbolpmiqddgyksgyxyrgilyzqndyefsxwviahfqkixihdde qvvygilwvoi ia
+                                                                |    |   |                                |levtebyjbvvzbzrgngqyewfegpipdqepjzhcqvmgewegjvbxarjucoz         
+
+Total: 4 
+
+> select author=[Fomenko A.T.] year=[1860,1900]
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Genetica                                                        |1890|430|Fomenko A.T.                    |Bbhfrvfzmilmptvuyyxc svssfdmggidxpynkcllaxxeegyseujtatltydutzblk
+                                                                |    |   |                                |gzxfayfqjrucxgjqqtzqljyzbrgqis dqxi                             
+
+Total: 1 
+
+4.4) Проверка delete
+
+> delete author=[Moore J.]
+
+Total: 1 
+> select
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+History                                                         |1979|278|Kuznetsov Y.A                   |Btmgkxefhfegazki ygri wkkfsamfdkzeqyajcxexcuvcbk iaxxwwgaogcizmw
+                                                                |    |   |                                |csjsalpuxgohyprxmguibpprsktqjvlabutrvxlgszcqcibpokx             
+Nature                                                          |1918|32 |Johnson R.                      |Bdljnmzovgfecflkdc vlajzlwdploklgwuuhixbobwrwgqoipjieshec tocdzi
+                                                                |    |   |                                |zibvqoldpgjlbzz cxhhedags                                       
+Computer                                                        |1953|325|Fomenko A.T.                    |D ftukgu                                                        
+Journal of Algebra                                              |1967|287|Johnson R.                      |U zvswco vovnxewibyhwgqfm hmpixkylfpgxsvrfptcip jbhuhmzulwvpts q
+                                                                |    |   |                                |cuuyqlsggwpyedxcetmmf vfvpkdwzinsckhcrcycrvwjhno                
+Genetica                                                        |1902|131|Bertrand A.W.                   |W injlzhulollvcrmatdkobrrprptknrzwexwctecgpnqhuchmvgqwygadvtcykb
+                                                                |    |   |                                |idytvryxmm cttepuowjjiezlpsnmrdjurboxz iazkirdylrijqfooqcvsdlw  
+Genetica                                                        |1890|430|Fomenko A.T.                    |Bbhfrvfzmilmptvuyyxc svssfdmggidxpynkcllaxxeegyseujtatltydutzblk
+                                                                |    |   |                                |gzxfayfqjrucxgjqqtzqljyzbrgqis dqxi                             
+Computer                                                        |1998|484|Fomenko A.T.                    |Rejpatfqldvlbtjszqhwxhzbtwgbyriqlgflz qzsk isi rnhbzda wlwmjmjzm
+                                                                |    |   |                                |ptxdsmrzmq                                                      
+History                                                         |1959|359|Miller F.                       |Ppdvnvywlwyryijitotltvjjtvcxsjapotzaoxwostvfqtcigvt esyxmpjtzjxm
+                                                                |    |   |                                |cwbfsmizectvvvsr                                                
+Computer                                                        |1904|172|Smith W.                        |Yftbolpmiqddgyksgyxyrgilyzqndyefsxwviahfqkixihdde qvvygilwvoi ia
+                                                                |    |   |                                |levtebyjbvvzbzrgngqyewfegpipdqepjzhcqvmgewegjvbxarjucoz         
+
+Total: 9 
+
+> delete
+
+Total: 9 
+> select
+
+Total: 0 
+
+4.5) Проверка insert
+
+> insert author=[Author] year=[1999] number=[19] article=[Some article from Computer Science] journal=[Computer]
+
+Total: 1 
+> select
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Computer                                                        |1999|19 |Author                          |Some article from Computer Science                              
+
+Total: 1 
+
+4.6) Проверка save
+
+> save
+
+Total: 1 
+
+SERVER:
+^C   4 - Close.
+Done.
+
+CLIENT:
+> select
+     - Write(text) error.
+   3 - Shutdown error.
+
+SERVER:
+$ ./server a.db
+
+CLIENT:
+$ ./client
+>
+
+SERVER:
+
+   4 -New (127.0.0.1 51915).
+
+CLIENT:
+> select
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Computer                                                        |1999|19 |Author                          |Some article from Computer Science                              
+
+Total: 1 
+> 
+
+4.7) Проверка clear
+
+> clear
+
+Total: 1 
+> select from 1
+INCORRECT_NUMBER_OF_FROM
+> clear
+
+Total: 0
+
+4.8)Проверка ввода некорректных данных
+
+> serect            
+UNKNOWN_QUERY_TYPE
+> select number=[acs]
+SYNTAX_ERROR
+> select author=[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]
+SYNTAX_ERROR
+> select year=[1990,1989]
+INCORRECT_FILTER
+> select number=[19,18]
+INCORRECT_FILTER
+> select from -1
+INCORRECT_NUMBER_OF_FROM
+> select from 2
+INCORRECT_NUMBER_OF_FROM
+> insert author=[A] number=[15] journal=[J] article=[Article] year=[1999] number=[15]
+SYNTAX_ERROR
+
+
+4.9) завершение работы клиента
+
+CLIENT:
+> End of process
+
+SERVER:
+   4 - Close.
+
+4.9) Завершение работы сервера
+
+SERVER:
+^C   4 - Close.
+Done
+
+CLIENT:
+> select
+     - Write(text) error.
+   3 - Shutdown error.
+
+5) Проверка работы с двумя клиентами
+
+SERVER:
+$ ./server a.db
+
+CLIENT1:
+$ ./client
+
+SERVER:
+   4 -New (127.0.0.1 5324).
+
+CLIENT2:
+$ ./client
+
+SERVER:
+   5 -New (127.0.0.1 5836).
+
+CLIENT1:
+> select
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Computer                                                        |1999|19 |Author                          |Some article from Computer Science                              
+
+Total: 1
+
+CLIENT2:
+> select
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Computer                                                        |1999|19 |Author                          |Some article from Computer Science                              
+
+Total: 1 
+
+CLIENT1:
+> delete
+
+Total: 1 
+
+CLIENT2:
+> select
+
+Total: 0 
+
+CLIENT1:
+> clear
+
+Total: 1 
+
+> select from 1
+INCORRECT_NUMBER_OF_FROM
+
+
+CLIENT2:
+> select from 1
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Computer                                                        |1999|19 |Author                          |Some article from Computer Science                              
+
+Total: 1 
+
+CLIENT1:
+> insert author=[Author] journal=[J] article=[Article] number=[1] year=[2000]
+
+Total: 1 
+> select
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+J                                                               |2000|1  |Author                          |Article                                                         
+
+Total: 1 
+
+CLIENT2:
+> select
+Journal name                                                    |Year|Num|Author                          |Article                                                         
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+J                                                               |2000|1  |Author                          |Article                                                         
+
+Total: 1 
+
+CLIENT1:
+> End of process
+
+SERVER:
+   4 - Close.
+
+CLIENT2:
+> End of process
+
+SERVER:
+^CDone.
+
+
+
